@@ -1,0 +1,55 @@
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Product {
+  id          String     @id @db.Uuid
+  name        String
+  description String
+  price       Decimal    @db.Decimal(12, 2)
+  sellers     Seller[]   @relation("SellerProducts")
+  orders      Order[]
+  aiSellers   AISeller[]
+}
+
+model Seller {
+  id        String     @id @db.Uuid
+  name      String
+  products  Product[]  @relation("SellerProducts")
+  aiSellers AISeller[]
+}
+
+model Buyer {
+  id      String   @id @db.Uuid
+  name    String
+  balance Decimal  @db.Decimal(12, 2)
+  orders  Order[]
+}
+
+model Order {
+  id        String  @id @db.Uuid
+  buyerId   String  @map("buyer_id") @db.Uuid
+  productId String  @map("product_id") @db.Uuid
+  buyer     Buyer   @relation(fields: [buyerId], references: [id], onDelete: Restrict)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([buyerId])
+  @@index([productId])
+}
+
+model AISeller {
+  id        String  @id @db.Uuid
+  sellerId  String  @map("seller_id") @db.Uuid
+  productId String  @map("product_id") @db.Uuid
+  seller    Seller  @relation(fields: [sellerId], references: [id], onDelete: Restrict)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([sellerId])
+  @@index([productId])
+}
