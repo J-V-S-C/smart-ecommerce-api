@@ -5,6 +5,7 @@ export function createProductRouter(productController: ProductController): Route
   const router = Router();
 
   router.post('/', (req, res) => productController.createProduct(req, res));
+  router.get('/search', (req, res) => productController.searchProducts(req, res));
   router.get('/', (req, res) => productController.listProducts(req, res));
   router.get('/:id', (req, res) => productController.getProductById(req, res));
   router.patch('/:id', (req, res) => productController.updateProduct(req, res));

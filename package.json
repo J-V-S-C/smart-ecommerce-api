@@ -3,12 +3,20 @@
 		"dev": "prisma generate && node --watch --import tsx src/server.ts",
 		"build": "prisma generate && tsc -p tsconfig.build.json && prisma validate",
 		"start": "node dist/server.js",
+		"test": "vitest run",
+		"test:watch": "vitest",
 		"check": "prisma generate && tsc --noEmit && prisma validate",
 		"db:generate": "prisma generate",
 		"db:migrate": "prisma migrate dev",
 		"db:deploy": "prisma migrate deploy"
 	},
 	"dependencies": {
+		"@google/genai": "^2.30.0",
+		"@opentelemetry/api": "^1.10.0",
+		"@opentelemetry/auto-instrumentations-node": "^0.82.0",
+		"@opentelemetry/sdk-metrics": "^3.0.0",
+		"@opentelemetry/sdk-node": "^0.300.0",
+		"@opentelemetry/sdk-trace": "^3.0.0",
 		"@prisma/adapter-pg": "^7.10.1",
 		"@prisma/client": "^7.10.1",
 		"dotenv": "^18.0.8",
@@ -23,6 +31,7 @@
 		"@types/pg": "^8.23.1",
 		"prisma": "^7.10.1",
 		"tsx": "^4.23.15",
-		"typescript": "^7.0.2"
+		"typescript": "^7.0.2",
+		"vitest": "^5.0.5"
 	}
 }

@@ -5,6 +5,7 @@ import { z } from 'zod';
 const createProductSchema = z.object({
   name: z.string().min(1),
   description: z.string(),
+  category: z.string().min(1),
   price: z.number().positive().max(9_999_999_999.99).multipleOf(0.01),
 });
 
@@ -42,6 +43,12 @@ export class ProductController {
 
   async listProducts(_req: Request, res: Response): Promise<Response> {
     return res.status(200).json(await this.productService.listProducts());
+  }
+
+  async searchProducts(req: Request, res: Response): Promise<Response> {
+    const parsed = z.object({ name: z.string().optional(), category: z.string().optional() }).safeParse(req.query);
+    if (!parsed.success) return res.status(400).json({ errors: parsed.error.issues });
+    return res.status(200).json(await this.productService.searchProducts(parsed.data.name, parsed.data.category));
   }
 
   async updateProduct(req: Request, res: Response): Promise<Response> {
