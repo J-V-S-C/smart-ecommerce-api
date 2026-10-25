@@ -1,5 +1,9 @@
 .env
+.env.*
+!.env.example
 src/generated/
-dist
-node_modules
-docker
+dist/
+node_modules/
+coverage/
+*.log
+*.tsbuildinfo

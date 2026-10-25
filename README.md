@@ -9,22 +9,21 @@ docker compose up --build -d
 docker compose ps
 ```
 
-A API fica em `http://localhost:3000` (ou na porta definida por `APP_PORT`).
+A API fica em `http://localhost:3000` (ou na porta definida por `PORT`).
 O Compose sobe o PostgreSQL, espera o banco ficar saudável, aplica as migrações
 e então inicia o backend. `GET /health` confirma que a API consegue consultar o
 PostgreSQL. O banco usa um volume persistente; `docker compose down`
 para os serviços sem apagar os dados.
 
-O Compose usa `POSTGRES_USER`, `POSTGRES_PASSWORD` e `POSTGRES_DB` de `.env` quando
-estiverem definidos. Caso contrário, usa os valores locais declarados em
-`compose.yaml`. O `DATABASE_URL` usado pelos containers é montado com o host
-interno `db`, independentemente do endereço usado no `.env` para execução fora
-do Docker. Defina uma senha própria em `POSTGRES_PASSWORD` antes de criar o volume.
+O Compose lê `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, `DATABASE_URL`
+e `PORT` de `.env`. Na `DATABASE_URL` usada pelo Compose, o host deve
+ser `db`, que é o nome do serviço PostgreSQL na rede interna. Mantenha nessa URL
+as mesmas credenciais definidas nas variáveis `POSTGRES_*`.
 
 ## PostgreSQL
 
 1. Crie um banco PostgreSQL e copie `.env.example` para `.env`.
-2. Ajuste `DATABASE_URL` em `.env`.
+2. Para executar fora do Docker, ajuste o host de `DATABASE_URL` para `localhost`.
 3. Execute `pnpm install`, `pnpm db:deploy` e `pnpm dev` dentro de `backend`.
 
 `pnpm db:deploy` aplica a migração versionada. Durante mudanças no schema, use

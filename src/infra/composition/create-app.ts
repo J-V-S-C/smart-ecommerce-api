@@ -11,16 +11,19 @@ import { BuyerService } from '../../application/services/buyer.service';
 import { SellerService } from '../../application/services/seller.service';
 import { OrderService } from '../../application/services/order.service';
 import { AISellerService } from '../../application/services/ai-seller.service';
+import { AIService } from '../../application/services/ai.service';
 import { ProductController } from '../controllers/product.controller';
 import { BuyerController } from '../controllers/buyer.controller';
 import { SellerController } from '../controllers/seller.controller';
 import { OrderController } from '../controllers/order.controller';
 import { AISellerController } from '../controllers/ai-seller.controller';
+import { AIController } from '../controllers/ai.controller';
 import { createProductRouter } from '../routes/product.routes';
 import { createBuyerRouter } from '../routes/buyer.routes';
 import { createSellerRouter } from '../routes/seller.routes';
 import { createOrderRouter } from '../routes/order.routes';
-import { createAISellerRouter } from '../routes/ai-seller.routes';
+import { createAISellerRouter } from '../routes/ai-service.routes';
+import { createAIRouter } from '../routes/ai.routes';
 
 export function createApp(prisma: PrismaClient): express.Express {
   const app = express();
@@ -35,22 +38,47 @@ export function createApp(prisma: PrismaClient): express.Express {
     }
   });
 
-  app.use('/products', createProductRouter(
-    new ProductController(new ProductService(new PrismaProductRepository(prisma))),
-  ));
-  app.use('/buyers', createBuyerRouter(
-    new BuyerController(new BuyerService(new PrismaBuyerRepository(prisma))),
-  ));
-  app.use('/sellers', createSellerRouter(
-    new SellerController(new SellerService(new PrismaSellerRepository(prisma))),
-  ));
-  app.use('/orders', createOrderRouter(
-    new OrderController(new OrderService(new PrismaOrderRepository(prisma))),
-  ));
-  app.use('/ai-sellers', createAISellerRouter(
-    new AISellerController(new AISellerService(new PrismaAISellerRepository(prisma))),
-  ));
-
+  const productRepository = new PrismaProductRepository(prisma);
+  app.use(
+    '/products',
+    createProductRouter(
+      new ProductController(new ProductService(productRepository)),
+    ),
+  );
+  app.use(
+    '/ai',
+    createAIRouter(new AIController(new AIService(productRepository))),
+  );
+  app.use(
+    '/buyers',
+    createBuyerRouter(
+      new BuyerController(new BuyerService(new PrismaBuyerRepository(prisma))),
+    ),
+  );
+  app.use(
+    '/sellers',
+    createSellerRouter(
+      new SellerController(
+        new SellerService(new PrismaSellerRepository(prisma)),
+      ),
+    ),
+  );
+  app.use(
+    '/orders',
+    createOrderRouter(
+      new OrderController(new OrderService(new PrismaOrderRepository(prisma))),
+    ),
+  );
+  /*
+  app.use(
+    '/ai-sellers',
+    createAISellerRouter(
+      new AISellerController(
+        new AISellerService(new PrismaAISellerRepository(prisma)),
+      ),
+    ),
+  );
+*/
   app.use(errorHandler);
   return app;
 }

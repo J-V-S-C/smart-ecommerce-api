@@ -12,6 +12,7 @@ model Product {
   id          String     @id @db.Uuid
   name        String
   description String
+  category    String
   price       Decimal    @db.Decimal(12, 2)
   sellers     Seller[]   @relation("SellerProducts")
   orders      Order[]

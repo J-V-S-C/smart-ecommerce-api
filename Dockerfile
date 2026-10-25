@@ -20,8 +20,6 @@ RUN pnpm build
 
 FROM build AS migrate
 
-COPY docker ./docker
-ENTRYPOINT ["sh", "/app/docker/entrypoint.sh"]
 CMD ["pnpm", "db:deploy"]
 
 FROM build AS production-dependencies
@@ -32,9 +30,7 @@ FROM base AS runtime
 COPY --from=production-dependencies /app/node_modules ./node_modules
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/dist ./dist
-COPY docker ./docker
 
 USER node
 EXPOSE 3000
-ENTRYPOINT ["sh", "/app/docker/entrypoint.sh"]
 CMD ["node", "dist/server.js"]
